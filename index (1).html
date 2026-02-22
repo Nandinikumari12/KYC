@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <title>KYC Management System | Advanced Identity Verification with Queue</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-container">
+    <header>
+      <div class="logo">
+        <span class="logo-icon">🔐</span>
+        <span>KYC<span class="logo-highlight">Manager</span></span>
+      </div>
+      
+      <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      
+      <nav id="mainNav">
+        <button class="nav-btn active" data-section="home">
+          <span class="nav-icon">🏠</span>
+          <span>Home</span>
+        </button>
+        <button class="nav-btn" data-section="apply">
+          <span class="nav-icon">📝</span>
+          <span>Apply KYC</span>
+        </button>
+        <button class="nav-btn" data-section="status">
+          <span class="nav-icon">🔍</span>
+          <span>Check Status</span>
+        </button>
+        <button class="nav-btn" data-section="admin">
+          <span class="nav-icon">⚙️</span>
+          <span>Admin</span>
+        </button>
+        <button class="nav-btn" data-section="analytics">
+          <span class="nav-icon">📊</span>
+          <span>Analytics</span>
+        </button>
+      </nav>
+    </header>
+
+    <main>
+
+      <!-- Home Section -->
+      <section id="home" class="section active">
+        <div class="hero">
+          <div class="hero-content">
+            <span class="hero-badge">Trusted by 10,000+ Users</span>
+            <h1>Next-Gen <span class="gradient-text">KYC Management</span></h1>
+            <p>Fast, secure, and transparent identity verification with FIFO queue processing</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary btn-large" onclick="navigate('apply')">
+                <span>Apply Now</span>
+                <span class="btn-icon">→</span>
+              </button>
+              <button class="btn btn-outline btn-large" onclick="navigate('status')">
+                <span>Track Status</span>
+              </button>
+            </div>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-card glass-effect">
+              <span class="stat-number" id="stat-total">0</span>
+              <span class="stat-label">Total Applications</span>
+              <div class="stat-trend positive">+12%</div>
+            </div>
+            <div class="stat-card glass-effect">
+              <span class="stat-number" id="stat-approved">0</span>
+              <span class="stat-label">Approved</span>
+            </div>
+            <div class="stat-card glass-effect">
+              <span class="stat-number" id="stat-pending">0</span>
+              <span class="stat-label">Pending</span>
+            </div>
+            <div class="stat-card glass-effect">
+              <span class="stat-number" id="stat-rejected">0</span>
+              <span class="stat-label">Rejected</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="features">
+          <div class="feature-card glass-effect">
+            <div class="feature-icon-wrapper">
+              <div class="feature-icon">🛡️</div>
+            </div>
+            <h3>Bank-Grade Security</h3>
+            <p>End-to-end encryption with secure local storage - your data never leaves your device</p>
+            <div class="feature-tag">Most Secure</div>
+          </div>
+          <div class="feature-card glass-effect">
+            <div class="feature-icon-wrapper">
+              <div class="feature-icon">⚡</div>
+            </div>
+            <h3>FIFO Queue Processing</h3>
+            <p>First-In-First-Out verification ensures fair and transparent processing for all applicants</p>
+            <div class="feature-tag">Fair</div>
+          </div>
+          <div class="feature-card glass-effect">
+            <div class="feature-icon-wrapper">
+              <div class="feature-icon">📱</div>
+            </div>
+            <h3>Mobile Optimized</h3>
+            <p>Fully responsive design with touch-friendly interface for seamless mobile experience</p>
+            <div class="feature-tag">Responsive</div>
+          </div>
+        </div>
+
+        <div class="recent-activity">
+          <h3>Recent Applications</h3>
+          <div class="activity-list" id="recentApplications"></div>
+        </div>
+      </section>
+
+      <!-- Apply KYC Section -->
+      <section id="apply" class="section">
+        <div class="page-header">
+          <h2>KYC Application Form</h2>
+          <p>Complete all required fields to submit your KYC application</p>
+          <div class="progress-bar">
+            <div class="progress-fill" id="formProgress" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="form-wrapper glass-effect">
+          <form id="kycForm" novalidate>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="fullName">
+                  Full Name <span class="req">*</span>
+                  <span class="tooltip">ⓘ<span class="tooltip-text">Enter your name as per government ID</span></span>
+                </label>
+                <input type="text" id="fullName" placeholder="Enter your full name" autocomplete="name" />
+                <span class="error-msg" id="err-fullName"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="dob">Date of Birth <span class="req">*</span></label>
+                <input type="date" id="dob" max="2024-12-31" />
+                <span class="error-msg" id="err-dob"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="aadhaar">Aadhaar Number <span class="req">*</span></label>
+                <input type="text" id="aadhaar" placeholder="XXXX XXXX XXXX" maxlength="14" />
+                <span class="error-msg" id="err-aadhaar"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="pan">PAN Number <span class="req">*</span></label>
+                <input type="text" id="pan" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase" />
+                <span class="error-msg" id="err-pan"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email Address <span class="req">*</span></label>
+                <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+                <span class="error-msg" id="err-email"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="phone">Phone Number <span class="req">*</span></label>
+                <input type="tel" id="phone" placeholder="9876543210" maxlength="10" />
+                <span class="error-msg" id="err-phone"></span>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="address">Residential Address <span class="req">*</span></label>
+                <textarea id="address" rows="3" placeholder="Enter your complete residential address"></textarea>
+                <span class="error-msg" id="err-address"></span>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="idProof">
+                  Upload ID Proof <span class="req">*</span>
+                  <span class="file-info">(JPG, PNG, PDF up to 10MB)</span>
+                </label>
+                <div class="upload-area enhanced-upload" id="uploadArea">
+                  <div class="upload-placeholder" id="uploadPlaceholder">
+                    <div class="upload-icon">📎</div>
+                    <p>Drag & drop or <span class="upload-link">browse</span></p>
+                    <small>Supported: JPG, PNG, PDF (Max 10MB)</small>
+                  </div>
+                  <div class="upload-preview-area hidden" id="uploadPreviewArea">
+                    <img id="imagePreview" class="image-preview" alt="ID Proof Preview" />
+                    <div class="upload-file-info">
+                      <span id="fileName"></span>
+                      <span id="fileSize"></span>
+                    </div>
+                    <button type="button" class="remove-img" id="removeImg" onclick="removeImage()">
+                      <span>🗑️</span> Remove
+                    </button>
+                  </div>
+                </div>
+                <input type="file" id="idProof" accept="image/*,application/pdf" style="display:none" />
+                <span class="error-msg" id="err-idProof"></span>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="termsAgree" />
+                  <span>I confirm that the information provided is accurate and complete <span class="req">*</span></span>
+                </label>
+                <span class="error-msg" id="err-terms"></span>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-ghost" onclick="resetForm()">
+                <span>🔄</span> Reset
+              </button>
+              <button type="submit" class="btn btn-primary btn-large" id="submitBtn">
+                <span>📤</span> Submit Application
+              </button>
+            </div>
+          </form>
+
+          <div id="submitSuccess" class="success-banner hidden">
+            <div class="success-icon">✅</div>
+            <div class="success-content">
+              <strong>Application Submitted Successfully!</strong>
+              <p>Your KYC application has been received and added to the verification queue.</p>
+              <div class="success-actions">
+                <button class="btn btn-outline-success" onclick="navigate('status')">
+                  Track Status
+                </button>
+                <button class="btn btn-ghost" onclick="resetForm()">
+                  New Application
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Status Check Section -->
+      <section id="status" class="section">
+        <div class="page-header">
+          <h2>Check Application Status</h2>
+          <p>Enter your Aadhaar number or Application ID to track your KYC</p>
+        </div>
+
+        <div class="status-lookup-wrapper glass-effect">
+          <div class="lookup-tabs">
+            <button class="tab-btn active" onclick="switchLookupMode('aadhaar')">By Aadhaar</button>
+            <button class="tab-btn" onclick="switchLookupMode('id')">By Application ID</button>
+          </div>
+
+          <div class="lookup-bar">
+            <input type="text" id="lookupInput" placeholder="Enter 12-digit Aadhaar number" />
+            <button class="btn btn-primary" onclick="lookupStatus()">
+              <span>🔍</span> Search
+            </button>
+          </div>
+
+          <div id="lookupResult"></div>
+        </div>
+
+        <div class="recent-applications-header">
+          <h3>All Applications</h3>
+          <div class="filter-buttons">
+            <button class="filter-btn active" onclick="filterStatusCards('all')">All</button>
+            <button class="filter-btn" onclick="filterStatusCards('pending')">Pending</button>
+            <button class="filter-btn" onclick="filterStatusCards('approved')">Approved</button>
+            <button class="filter-btn" onclick="filterStatusCards('rejected')">Rejected</button>
+          </div>
+        </div>
+
+        <div id="allApplications" class="status-cards"></div>
+      </section>
+
+      <!-- Admin Dashboard -->
+      <section id="admin" class="section">
+        <div class="page-header">
+          <h2>Admin Dashboard</h2>
+          <p>Comprehensive KYC application management system with FIFO queue</p>
+        </div>
+
+        <div class="admin-stats-grid">
+          <div class="admin-stat-card pending-stat glass-effect">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-content">
+              <span class="admin-stat-num" id="admin-pending">0</span>
+              <span>In Queue</span>
+            </div>
+          </div>
+          <div class="admin-stat-card approved-stat glass-effect">
+            <div class="stat-icon">✅</div>
+            <div class="stat-content">
+              <span class="admin-stat-num" id="admin-approved">0</span>
+              <span>Approved</span>
+            </div>
+          </div>
+          <div class="admin-stat-card rejected-stat glass-effect">
+            <div class="stat-icon">❌</div>
+            <div class="stat-content">
+              <span class="admin-stat-num" id="admin-rejected">0</span>
+              <span>Rejected</span>
+            </div>
+          </div>
+          <div class="admin-stat-card total-stat glass-effect">
+            <div class="stat-icon">📊</div>
+            <div class="stat-content">
+              <span class="admin-stat-num" id="admin-total">0</span>
+              <span>Total</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Queue Management Panel -->
+        <!-- Queue Management Panel - Make sure buttons have both id AND onclick -->
+<div class="queue-management-panel glass-effect">
+    <div class="queue-header">
+        <h3><span>🔄</span> KYC Verification Queue (FIFO)</h3>
+        <div class="queue-controls">
+            <button class="btn btn-primary" id="processNextBtn" onclick="processNextInQueue(); return false;">
+                <span>▶️</span> Process Next
+            </button>
+            <button class="btn btn-outline" id="processBatchBtn" onclick="processMultipleFromQueue(5); return false;">
+                <span>⚡</span> Process 5
+            </button>
+            <button class="btn btn-ghost" id="refreshQueueBtn" onclick="updateQueueDisplay(); showToast('Queue refreshed', 'info'); return false;">
+                <span>🔄</span> Refresh
+            </button>
+        </div>
+    </div>
+    <div id="queueDisplay" class="queue-display">
+        <!-- Queue will be dynamically populated -->
+    </div>
+</div>
+        <div class="admin-controls">
+          <div class="search-filter-wrapper">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="searchInput" placeholder="Search by name, Aadhaar, or PAN..." />
+            </div>
+
+            <div class="filter-group">
+              <select id="statusFilter" class="filter-select">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+
+              <select id="dateFilter" class="filter-select">
+                <option value="all">All Time</option>
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="admin-actions">
+            <button class="btn btn-outline" onclick="exportToExcel()">
+              <span>📥</span> Export Excel
+            </button>
+            <button class="btn btn-danger" onclick="clearAllData()">
+              <span>🗑️</span> Clear All
+            </button>
+          </div>
+        </div>
+
+        <div class="table-container glass-effect">
+          <table id="adminTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Full Name</th>
+                <th>Aadhaar</th>
+                <th>PAN</th>
+                <th>Contact</th>
+                <th>Submitted</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminTableBody"></tbody>
+          </table>
+
+          <div id="emptyTable" class="empty-state hidden">
+            <div class="empty-icon">📭</div>
+            <p>No KYC applications found</p>
+            <small>Applications will appear here once submitted</small>
+          </div>
+
+          <div class="table-pagination" id="tablePagination"></div>
+        </div>
+
+        <!-- Application Detail Modal -->
+        <div id="detailModal" class="modal-overlay hidden">
+          <div class="modal glass-effect">
+            <div class="modal-header">
+              <h3>Application Details</h3>
+              <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer">
+              <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+              <button class="btn btn-primary" onclick="printApplication()">Print</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Analytics Section -->
+      <section id="analytics" class="section">
+        <div class="page-header">
+          <h2>Analytics Dashboard</h2>
+          <p>Insights and metrics for KYC applications and queue performance</p>
+        </div>
+
+        <div class="analytics-grid">
+          <div class="analytics-card glass-effect">
+            <h3>Application Trends</h3>
+            <div class="chart-container" id="trendChart">
+              <canvas id="trendCanvas"></canvas>
+            </div>
+          </div>
+
+          <div class="analytics-card glass-effect">
+            <h3>Status Distribution</h3>
+            <div class="chart-container" id="pieChart">
+              <canvas id="pieCanvas"></canvas>
+            </div>
+          </div>
+
+          <div class="analytics-card glass-effect">
+            <h3>Processing Time</h3>
+            <div class="metric-list">
+              <div class="metric-item">
+                <span class="metric-label">Average Time:</span>
+                <span class="metric-value" id="avgTime">0 hrs</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Fastest:</span>
+                <span class="metric-value" id="fastestTime">0 hrs</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Slowest:</span>
+                <span class="metric-value" id="slowestTime">0 hrs</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="analytics-card glass-effect">
+            <h3>Daily Activity</h3>
+            <div class="activity-heatmap" id="activityHeatmap"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <p>KYC Management System v3.0 — Advanced Identity Verification with FIFO Queue</p>
+        <p class="footer-small">© 2026 E-KYC Data | All data stored locally</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
